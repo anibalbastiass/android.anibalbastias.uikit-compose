@@ -8,9 +8,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HorizontalDivider(modifier: Modifier = Modifier) {
+fun HorizontalDivider(modifier: Modifier = Modifier, color: Color = Color.LightGray) {
     Divider(
-        color = Color.LightGray,
+        color = color,
         modifier = Modifier
             .height(0.5.dp)
             .then(modifier)

@@ -38,6 +38,11 @@ android {
         kotlinCompilerExtensionVersion versions.deps.compose
         kotlinCompilerVersion versions.deps.kotlin
     }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
 }
 
 dependencies {
