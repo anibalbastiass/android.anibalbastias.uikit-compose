@@ -53,8 +53,9 @@ dependencies {
     implementation deps.androidx.constraintLayout
     implementation deps.androidx.constraintLayoutSolver
     implementation deps.androidx.fragmentKtx
-    implementation deps.androidx.lifecycleLiveData
-    implementation deps.androidx.lifecycleViewModel
+    implementation deps.androidx.lifecycle.liveData
+    implementation deps.androidx.lifecycle.viewModel
+    implementation deps.androidx.lifecycle.runtimeKtx
     implementation deps.androidx.navigationFragment
     implementation deps.androidx.recyclerView
     implementation deps.androidx.swipeRefreshLayout
