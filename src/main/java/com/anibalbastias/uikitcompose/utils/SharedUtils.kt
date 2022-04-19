@@ -57,12 +57,14 @@ object SharedUtils {
 
     @Composable
     fun SharedListRootContainer(
+        back: () -> Unit,
         container: @Composable (FiniteAnimationSpec<Float>, Int) -> Unit
     ) {
         SharedElementsRoot {
-//            BackHandler(enabled = selectedItem >= 0) {
-//                changeItem(-1)
-//            }
+            BackHandler(enabled = selectedItem >= 0) {
+                back.invoke()
+                changeItem(-1)
+            }
 
             container.invoke(
                 tween(durationMillis = TransitionDurationMillis),
