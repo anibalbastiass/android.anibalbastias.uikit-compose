@@ -1,5 +1,6 @@
 package com.anibalbastias.uikitcompose.utils
 
+import android.content.res.Resources
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -49,3 +50,8 @@ fun rememberForeverLazyListState(
     }
     return scrollState
 }
+
+fun Float.dp(): Float = this * density + 0.5f
+
+val density: Float
+    get() = Resources.getSystem().displayMetrics.density
