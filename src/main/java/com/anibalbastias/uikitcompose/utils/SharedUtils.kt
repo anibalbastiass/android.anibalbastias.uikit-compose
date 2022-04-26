@@ -81,7 +81,6 @@ object SharedUtils {
         SharedMaterialContainer(
             key = image,
             screenKey = listScreen,
-//            shape = CircleShape,
             color = Color.Transparent,
             transitionSpec = fadeOutTransitionSpec
         ) {
