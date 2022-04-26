@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.unit.dp
+import com.anibalbastias.uikitcompose.theme.DarkGrey
+import com.anibalbastias.uikitcompose.theme.RedAlpha
 
 /**
  * Modification from
@@ -29,35 +31,39 @@ import androidx.compose.ui.unit.dp
 @ExperimentalMaterialApi
 @Composable
 fun FavoriteSwipeCard(
-
+    currentState: Boolean,
+    screenItem: @Composable (isFavorite: Boolean) -> Unit,
 ) {
-    var unread by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(currentState) }
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            if (it == DismissedToEnd) unread = !unread
-            it != DismissedToEnd
+            if (it == DismissedToStart) isFavorite = !isFavorite
+            it != DismissedToStart
         }
     )
     SwipeToDismiss(
         state = dismissState,
-        modifier = Modifier.padding(vertical = 4.dp),
+        modifier = Modifier.padding(vertical = 0.dp).background(DarkGrey),
         directions = setOf(EndToStart),
+        dismissThresholds = { direction ->
+            FractionalThreshold(if (direction == StartToEnd) 0.25f else 0.5f)
+        },
         background = {
             val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
             val color by animateColorAsState(
                 when (dismissState.targetValue) {
-                    Default -> Color.LightGray
-                    DismissedToStart -> Color.Green
-                    DismissedToEnd -> Color.Green
+                    Default -> DarkGrey
+                    DismissedToEnd -> DarkGrey
+                    DismissedToStart -> RedAlpha
                 }
             )
             val alignment = when (direction) {
+                StartToEnd -> Alignment.CenterStart
                 EndToStart -> Alignment.CenterEnd
-                StartToEnd -> Alignment.CenterEnd
             }
             val icon = when (direction) {
-                EndToStart -> Icons.Default.Favorite
                 StartToEnd -> Icons.Default.Favorite
+                EndToStart -> Icons.Default.Favorite
             }
             val scale by animateFloatAsState(
                 if (dismissState.targetValue == Default) 0.75f else 1f
@@ -71,7 +77,8 @@ fun FavoriteSwipeCard(
                 contentAlignment = alignment
             ) {
                 Icon(
-                    imageVector = icon,
+                    icon,
+                    tint = Red,
                     contentDescription = "Localized description",
                     modifier = Modifier.scale(scale)
                 )
@@ -83,12 +90,7 @@ fun FavoriteSwipeCard(
                     if (dismissState.dismissDirection != null) 4.dp else 0.dp
                 ).value
             ) {
-                ListItem(
-                    text = {
-                        Text("Hello!", fontWeight = if (unread) FontWeight.Bold else null)
-                    },
-                    secondaryText = { Text("Swipe me left or right!") }
-                )
+                screenItem(isFavorite)
             }
         }
     )
