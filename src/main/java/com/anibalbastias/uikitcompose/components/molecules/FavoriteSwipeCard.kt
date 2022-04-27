@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.DismissDirection.EndToStart
 import androidx.compose.material.DismissDirection.StartToEnd
@@ -33,17 +34,23 @@ import com.anibalbastias.uikitcompose.theme.RedAlpha
 fun FavoriteSwipeCard(
     currentState: Boolean,
     screenItem: @Composable (isFavorite: Boolean) -> Unit,
+    onSwipe: (isFavorite: Boolean) -> Unit,
 ) {
     var isFavorite by remember { mutableStateOf(currentState) }
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            if (it == DismissedToStart) isFavorite = !isFavorite
+            if (it == DismissedToStart) {
+                isFavorite = !isFavorite
+                onSwipe(isFavorite)
+            }
             it != DismissedToStart
         }
     )
     SwipeToDismiss(
         state = dismissState,
-        modifier = Modifier.padding(vertical = 0.dp).background(DarkGrey),
+        modifier = Modifier
+            .padding(vertical = 0.dp)
+            .background(DarkGrey),
         directions = setOf(EndToStart),
         dismissThresholds = { direction ->
             FractionalThreshold(if (direction == StartToEnd) 0.25f else 0.5f)
@@ -73,6 +80,7 @@ fun FavoriteSwipeCard(
                 Modifier
                     .fillMaxSize()
                     .background(color)
+                    .size(50.dp)
                     .padding(horizontal = 20.dp),
                 contentAlignment = alignment
             ) {
