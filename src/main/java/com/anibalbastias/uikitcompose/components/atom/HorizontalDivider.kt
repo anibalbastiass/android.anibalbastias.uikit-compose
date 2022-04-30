@@ -12,7 +12,7 @@ fun HorizontalDivider(modifier: Modifier = Modifier, color: Color = Color.LightG
     Divider(
         color = color,
         modifier = Modifier
-            .height(0.5.dp)
+            .height(1.dp)
             .then(modifier)
     )
 }

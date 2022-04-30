@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.anibalbastias.uikitcompose.components.atom.Body1
@@ -38,6 +39,7 @@ fun SearchTopBar(
     matchesFound: Boolean,
     results: @Composable () -> Unit = {},
     noResults: @Composable () -> Unit = {},
+    default: @Composable () -> Unit = {},
 ) {
     Box {
         Column(
@@ -60,6 +62,8 @@ fun SearchTopBar(
             } else {
                 if (searchText.isNotEmpty()) {
                     noResults()
+                } else {
+                    default()
                 }
             }
         }
