@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentManager
+import com.anibalbastias.uikitcompose.BuildConfig
 import com.anibalbastias.uikitcompose.R
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
@@ -20,7 +21,7 @@ fun YoutubeVideoScreen(
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            var player: YouTubePlayer? = null
+            var player: YouTubePlayer?
 
             val onPlaylistChangeListener = object : YouTubePlayer.PlaylistEventListener {
                 override fun onPlaylistEnded() {}
@@ -28,10 +29,10 @@ fun YoutubeVideoScreen(
                 override fun onNext() {}
             }
 
-
             val youtubeApiInitializedListener = object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
                     player = p1
+                    player?.fullscreenControlFlags = 0
                     player?.setPlaylistEventListener(onPlaylistChangeListener)
                     player?.loadVideos(playList)
                 }
@@ -42,7 +43,6 @@ fun YoutubeVideoScreen(
             }
 
             FrameLayout(context).apply {
-                // select any R.id.X from your project, it does not matter what it is, but container must have one for transaction below.
                 id = R.id.tv_id
 
                 val youtubeView = YouTubePlayerSupportFragmentX()
@@ -56,7 +56,7 @@ fun YoutubeVideoScreen(
                     )
                     .commit()
 
-                youtubeView.initialize("BuildConfig.youtubeApi", youtubeApiInitializedListener)
+                youtubeView.initialize(BuildConfig.YOUTUBE_API_KEY, youtubeApiInitializedListener)
             }
         },
         update = { }

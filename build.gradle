@@ -5,6 +5,8 @@ plugins {
 }
 
 android {
+    def CONFIG = { k -> "${credentialsProperties.get(k)}" }
+
     compileSdkVersion versions.android.compile
 
     defaultConfig {
@@ -15,6 +17,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        buildConfigField "String", "YOUTUBE_API_KEY", CONFIG("YOUTUBE_API_KEY")
     }
 
     buildTypes {

@@ -68,9 +68,7 @@ fun YouTubeExpandableScreen(
         }
 
         Box(
-            modifier = Modifier
-                .layoutId("video_view")
-                .background(Color.Black)
+            modifier = Modifier.layoutId("video_view")
         )
 
         Body1(
