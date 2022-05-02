@@ -1,6 +1,9 @@
 package com.anibalbastias.uikitcompose.utils
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -56,3 +59,9 @@ fun Float.dp(): Float = this * density + 0.5f
 
 val density: Float
     get() = Resources.getSystem().displayMetrics.density
+
+fun Context.findActivity(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}

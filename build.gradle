@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Android X
     implementation deps.androidx.appCompat
