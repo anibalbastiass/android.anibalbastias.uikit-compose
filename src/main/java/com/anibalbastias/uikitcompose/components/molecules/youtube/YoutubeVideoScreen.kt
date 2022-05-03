@@ -1,72 +1,47 @@
 package com.anibalbastias.uikitcompose.components.molecules.youtube
 
 import android.util.Log
-import android.widget.FrameLayout
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentManager
-import com.anibalbastias.uikitcompose.BuildConfig
-import com.anibalbastias.uikitcompose.R
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
-import com.google.android.youtube.player.YouTubePlayerSupportFragmentX
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
-var youTubePlayer: YouTubePlayer? = null
+var movieYouTubePlayer: YouTubePlayer? = null
+var currentKey: String = ""
 
 @Composable
 fun YoutubeVideoScreen(
     modifier: Modifier = Modifier,
     key: String,
-    fragmentManager: FragmentManager,
-    firstTime: Boolean,
-    onError: (String) -> Unit,
+    animateToEnd: Boolean,
 ) {
-    if (firstTime) {
-        youTubePlayer?.loadVideo(key)
+    if (key != currentKey) {
+        movieYouTubePlayer?.loadVideo(key, 0f)
+        currentKey = key
+    }
+
+    val videoModifier = if (animateToEnd) {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier.size(120.dp, 120.dp)
     }
 
     AndroidView(
-        modifier = modifier,
+        modifier = modifier.then(videoModifier),
         factory = { context ->
-
-            val onPlaylistChangeListener = object : YouTubePlayer.PlaylistEventListener {
-                override fun onPlaylistEnded() {}
-                override fun onPrevious() {}
-                override fun onNext() {}
-            }
-
-            val youtubeApiInitializedListener = object : YouTubePlayer.OnInitializedListener {
-                override fun onInitializationSuccess(
-                    p0: YouTubePlayer.Provider?,
-                    p1: YouTubePlayer?,
-                    p2: Boolean,
-                ) {
-                    youTubePlayer = p1
-                    youTubePlayer?.fullscreenControlFlags = 0
-                    youTubePlayer?.setPlaylistEventListener(onPlaylistChangeListener)
-                    youTubePlayer?.loadVideo(key)
-                }
-
-                override fun onInitializationFailure(
-                    p0: YouTubePlayer.Provider?,
-                    p1: YouTubeInitializationResult?,
-                ) {
-                    onError(p1.toString())
-                }
-            }
-
-            FrameLayout(context).apply {
-                id = R.id.tv_id
-
-                val youtubeView = YouTubePlayerSupportFragmentX()
-
-                fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.tv_id, youtubeView, null)
-                    .commit()
-
-                youtubeView.initialize(BuildConfig.YOUTUBE_API_KEY, youtubeApiInitializedListener)
+            YouTubePlayerView(context).apply {
+                addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                        movieYouTubePlayer = youTubePlayer
+                        youTubePlayer.loadVideo(key, 0f)
+                    }
+                })
             }
         },
         update = {

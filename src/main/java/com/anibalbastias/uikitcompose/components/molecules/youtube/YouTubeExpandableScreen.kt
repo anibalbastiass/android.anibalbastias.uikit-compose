@@ -1,6 +1,5 @@
 package com.anibalbastias.uikitcompose.components.molecules.youtube
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -17,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import androidx.fragment.app.FragmentManager
 import com.anibalbastias.uikitcompose.R
 import com.anibalbastias.uikitcompose.components.atom.Body1
 import com.anibalbastias.uikitcompose.components.atom.Body2
@@ -27,7 +25,6 @@ import com.anibalbastias.uikitcompose.components.atom.Body2
 fun YouTubeExpandableScreen(
     background: Color,
     textColor: Color,
-    fragmentManager: FragmentManager,
     title: String,
     subTitle: String,
     key: String,
@@ -62,13 +59,7 @@ fun YouTubeExpandableScreen(
                 .background(background)
                 .clickable { animatedToEnd = !animatedToEnd }
         ) {
-            YoutubeVideoScreen(
-                key = key,
-                fragmentManager = fragmentManager,
-                firstTime = animatedToEnd
-            ) {
-                Log.d("Youtube", "Error: $it")
-            }
+            YoutubeVideoScreen(key = key, animateToEnd = animatedToEnd)
         }
 
         Box(

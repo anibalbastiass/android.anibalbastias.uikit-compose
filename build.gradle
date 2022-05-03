@@ -77,6 +77,8 @@ dependencies {
     debugImplementation deps.androidx.compose.uiPreviewDebug
 
     implementation deps.thirdParty.sharedElementCompose
+    implementation deps.thirdParty.youTubePlayer
+    implementation deps.thirdParty.youTubePlayerChromcast
 
     // Google
     implementation deps.google.material
