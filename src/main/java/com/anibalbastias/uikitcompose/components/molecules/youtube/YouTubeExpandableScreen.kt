@@ -28,7 +28,10 @@ fun YouTubeExpandableScreen(
     background: Color,
     textColor: Color,
     fragmentManager: FragmentManager,
-    playList: List<String>
+    title: String,
+    subTitle: String,
+    key: String,
+    description: String,
 ) {
     var animatedToEnd by remember {
         mutableStateOf(true)
@@ -60,8 +63,9 @@ fun YouTubeExpandableScreen(
                 .clickable { animatedToEnd = !animatedToEnd }
         ) {
             YoutubeVideoScreen(
-                playList = playList,
+                key = key,
                 fragmentManager = fragmentManager,
+                firstTime = animatedToEnd
             ) {
                 Log.d("Youtube", "Error: $it")
             }
@@ -72,13 +76,13 @@ fun YouTubeExpandableScreen(
         )
 
         Body1(
-            text = "Title video",
+            text = title,
             color = textColor,
             modifier = Modifier.layoutId("title")
         )
 
         Body2(
-            text = "Description video",
+            text = subTitle + "\n\n" + description,
             color = textColor,
             modifier = Modifier.layoutId("description")
         )

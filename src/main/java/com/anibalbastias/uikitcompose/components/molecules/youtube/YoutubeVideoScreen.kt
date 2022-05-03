@@ -1,5 +1,6 @@
 package com.anibalbastias.uikitcompose.components.molecules.youtube
 
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,17 +12,23 @@ import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerSupportFragmentX
 
+var youTubePlayer: YouTubePlayer? = null
+
 @Composable
 fun YoutubeVideoScreen(
     modifier: Modifier = Modifier,
-    playList: List<String>,
+    key: String,
     fragmentManager: FragmentManager,
-    onError: (String) -> Unit
+    firstTime: Boolean,
+    onError: (String) -> Unit,
 ) {
+    if (firstTime) {
+        youTubePlayer?.loadVideo(key)
+    }
+
     AndroidView(
         modifier = modifier,
         factory = { context ->
-            var player: YouTubePlayer?
 
             val onPlaylistChangeListener = object : YouTubePlayer.PlaylistEventListener {
                 override fun onPlaylistEnded() {}
@@ -30,14 +37,21 @@ fun YoutubeVideoScreen(
             }
 
             val youtubeApiInitializedListener = object : YouTubePlayer.OnInitializedListener {
-                override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
-                    player = p1
-                    player?.fullscreenControlFlags = 0
-                    player?.setPlaylistEventListener(onPlaylistChangeListener)
-                    player?.loadVideos(playList)
+                override fun onInitializationSuccess(
+                    p0: YouTubePlayer.Provider?,
+                    p1: YouTubePlayer?,
+                    p2: Boolean,
+                ) {
+                    youTubePlayer = p1
+                    youTubePlayer?.fullscreenControlFlags = 0
+                    youTubePlayer?.setPlaylistEventListener(onPlaylistChangeListener)
+                    youTubePlayer?.loadVideo(key)
                 }
 
-                override fun onInitializationFailure(p0: YouTubePlayer.Provider?, p1: YouTubeInitializationResult?) {
+                override fun onInitializationFailure(
+                    p0: YouTubePlayer.Provider?,
+                    p1: YouTubeInitializationResult?,
+                ) {
                     onError(p1.toString())
                 }
             }
@@ -49,16 +63,14 @@ fun YoutubeVideoScreen(
 
                 fragmentManager
                     .beginTransaction()
-                    .add(
-                        R.id.tv_id,
-                        youtubeView,
-                        null
-                    )
+                    .replace(R.id.tv_id, youtubeView, null)
                     .commit()
 
                 youtubeView.initialize(BuildConfig.YOUTUBE_API_KEY, youtubeApiInitializedListener)
             }
         },
-        update = { }
+        update = {
+            Log.d("Youtube video", "update")
+        }
     )
 }
