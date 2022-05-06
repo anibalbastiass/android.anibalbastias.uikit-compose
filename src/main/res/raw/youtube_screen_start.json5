@@ -1,0 +1,49 @@
+{
+  background: {
+    width: "spread",
+    height: 60,
+    start: ['parent', 'start', 16],
+    bottom: ['parent', 'bottom', 16],
+    end: ['parent', 'end', 16],
+  },
+  v1: {
+    width: 100,
+    height: 60,
+    start: ['parent', 'start', 16],
+    bottom: ['parent', 'bottom', 16]
+  },
+  title: {
+    width: "spread",
+    start: ['v1', 'end', 8],
+    top: ['v1', 'top', 8],
+    end: ['play', 'start', 8],
+    custom: {
+      textSize: 16
+    }
+  },
+  description: {
+    start: ['v1', 'end', 8],
+    top: ['title', 'bottom', 0],
+    end: ['play', 'start', 8],
+    custom: {
+      textSize: 14
+    }
+  },
+  list: {
+    width: "spread",
+    height: 0,
+    start: ['parent', 'start', 8],
+    end: ['parent', 'end', 8],
+    top: ['parent', 'bottom', 0]
+  },
+  play: {
+    end: ['close', 'start', 8],
+    top: ['v1', 'top', 0],
+    bottom: ['v1', 'bottom', 0]
+  },
+  close: {
+    end: ['parent', 'end', 24],
+    top: ['v1', 'top', 0],
+    bottom: ['v1', 'bottom', 0]
+  }
+}

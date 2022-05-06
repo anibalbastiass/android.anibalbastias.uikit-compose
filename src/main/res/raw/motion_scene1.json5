@@ -22,13 +22,29 @@
         width: 'spread',
         height: 'wrap',
         top: ['content_video', 'top', 8],
-        start: ['video_view', 'end', 8]
+        start: ['video_view', 'end', 8],
+        end: ['play','end']
       },
       description: {
-        width: 'spread',
+        width: 'fill',
         height: 'wrap',
         top: ['title', 'bottom', 4],
-        start: ['video_view', 'end', 8]
+        start: ['video_view', 'end', 8],
+        end: ['play','end']
+      },
+      play: {
+        width: 'wrap',
+        height: 'wrap',
+        top: ['content_video', 'top', 4],
+        start: ['description', 'start', 4],
+        end: ['close', 'end', 4]
+      },
+      close: {
+        width: 'wrap',
+        height: 'wrap',
+        top: ['content_video', 'top', 4],
+        start: ['play','start', 4],
+        end: ['parent','end', 4]
       }
     },
     end: {
@@ -44,7 +60,7 @@
       },
       video_view: {
         width: 'spread',
-        height: 280,
+        height: 230,
         top: ['parent', 'top'],
         start: ['parent', 'start'],
         end: ['parent', 'end']
