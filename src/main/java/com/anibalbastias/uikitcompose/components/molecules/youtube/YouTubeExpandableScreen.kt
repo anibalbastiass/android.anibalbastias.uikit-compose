@@ -102,6 +102,7 @@ fun YouTubeExpandableScreen(
                 text = title,
                 modifier = Modifier
                     .layoutId("title")
+                    .fillMaxWidth(.5f)
                     .background(background),
                 color = textColor,
                 style = MaterialTheme.typography.body1,
@@ -113,6 +114,7 @@ fun YouTubeExpandableScreen(
                 text = subTitle,
                 modifier = Modifier
                     .layoutId("description")
+                    .fillMaxWidth(.4f)
                     .background(background),
                 color = textColor,
                 maxLines = 1,
