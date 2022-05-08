@@ -3,10 +3,12 @@ package com.anibalbastias.uikitcompose.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Resources
+import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
@@ -64,4 +66,17 @@ fun Context.findActivity(): AppCompatActivity? = when (this) {
     is AppCompatActivity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
+}
+
+@Composable
+fun getMotionScene(
+    context: Context,
+    @RawRes scene: Int,
+): String {
+    val motionScene = remember {
+        context.resources.openRawResource(scene)
+            .readBytes()
+            .decodeToString()
+    }
+    return motionScene
 }

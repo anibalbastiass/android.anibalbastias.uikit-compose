@@ -1,7 +1,5 @@
 package com.anibalbastias.uikitcompose.components.molecules.youtube
 
-import android.content.Context
-import androidx.annotation.RawRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -13,13 +11,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,38 +30,21 @@ import coil.request.ImageRequest
 import com.anibalbastias.uikitcompose.R
 import com.anibalbastias.uikitcompose.components.atom.Body2
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeUtils.getYouTubeThumbnail
+import com.anibalbastias.uikitcompose.utils.getMotionScene
 import com.anibalbastias.uikitcompose.utils.rememberForeverLazyListState
 import kotlinx.coroutines.launch
-
-@Composable
-private fun getMotionScene(
-    context: Context,
-    @RawRes scene: Int,
-): String {
-    val motionScene = remember {
-        context.resources.openRawResource(scene)
-            .readBytes()
-            .decodeToString()
-    }
-    return motionScene
-}
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
 @Composable
 fun YouTubeExpandableScreen(
+    viewModel: YouTubeViewModel,
     background: Color,
     textColor: Color,
-    title: String,
-    subTitle: String,
-    key: String,
-    videos: List<Pair<String, String>>,
     closeButtonAction: () -> Unit,
-    isShowVideo: MutableState<Boolean>,
 ) {
-    val currentKey = remember { mutableStateOf(key) }
     val progress by animateFloatAsState(
-        targetValue = if (isShowVideo.value) 1f else 0f,
+        targetValue = if (viewModel.isExpanded.value) 1f else 0f,
         animationSpec = tween(300)
     )
 
@@ -78,28 +59,30 @@ fun YouTubeExpandableScreen(
             progress = progress,
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (isShowVideo.value) background else Color.Transparent)
+                .background(if (viewModel.isExpanded.value) background else Color.Transparent)
         ) {
             Box(
                 modifier = Modifier
                     .layoutId("background", "box")
                     .background(background)
                     .clickable(onClick = {
-                        isShowVideo.value = !isShowVideo.value
+                        viewModel.isExpanded.value = !viewModel.isExpanded.value
                     })
             )
             Box(
                 modifier = Modifier
                     .padding(0.dp)
-                    .clickable { isShowVideo.value = !isShowVideo.value }
+                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value }
                     .layoutId("v1", "box")
             ) {
-                currentKey.value = key
-                YoutubeVideoScreen(key = currentKey, animateToEnd = isShowVideo.value)
+                YoutubeVideoScreen(
+                    viewModel = viewModel,
+                    animateToEnd = viewModel.isExpanded.value
+                )
             }
 
             Text(
-                text = title,
+                text = viewModel.selectedVideo.value.main,
                 modifier = Modifier
                     .layoutId("title")
                     .fillMaxWidth(.5f)
@@ -111,7 +94,7 @@ fun YouTubeExpandableScreen(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = subTitle,
+                text = viewModel.selectedVideo.value.name,
                 modifier = Modifier
                     .layoutId("description")
                     .fillMaxWidth(.4f)
@@ -127,61 +110,27 @@ fun YouTubeExpandableScreen(
                     .layoutId("list", "box")
                     .background(background)
             ) {
-                val lazyListState = rememberForeverLazyListState(key = "VideoMovies")
-                val coroutineScope = rememberCoroutineScope()
-
-                LazyColumn(
-                    modifier = Modifier.padding(top = 10.dp, bottom = 100.dp),
-                    state = lazyListState) {
-                    itemsIndexed(videos) { index, video ->
-                        Card(
-                            border = if (video.second == currentKey.value) BorderStroke(2.dp,
-                                textColor) else null,
-                            backgroundColor = background
-                        ) {
-                            Column {
-                                Row(
-                                    modifier = Modifier
-                                        .clickable {
-                                            coroutineScope.launch {
-                                                lazyListState.animateScrollToItem(index = index)
-                                            }
-                                            currentKey.value = video.second
-                                        }
-                                        .padding(10.dp)
-                                ) {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(getYouTubeThumbnail(video.second))
-                                            .crossfade(true)
-                                            .build(),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .background(Color.Black)
-                                            .height(50.dp)
-                                    )
-
-                                    Body2(
-                                        text = video.first,
-                                        color = textColor,
-                                        modifier = Modifier
-                                            .padding(start = 10.dp)
-                                            .align(Alignment.CenterVertically)
-                                    )
-                                }
-
-                                Divider(color = textColor, modifier = Modifier.padding(top = 5.dp))
-                            }
-                        }
-                    }
-                }
+                YouTubeVideoList(viewModel, textColor, background)
             }
             Icon(
-                Icons.Filled.PlayArrow,
+                painter = painterResource(
+                    id = if (viewModel.isPlaying.value) {
+                        R.drawable.ic_pause
+                    } else {
+                        R.drawable.ic_play
+                    }
+                ),
                 contentDescription = "Play",
                 tint = textColor,
                 modifier = Modifier
-                    .clickable { }
+                    .clickable {
+                        if (viewModel.isPlaying.value) {
+                            viewModel.movieYouTubePlayer?.pause()
+                        } else {
+                            viewModel.movieYouTubePlayer?.play()
+                        }
+                        viewModel.isPlaying.value = !viewModel.isPlaying.value
+                    }
                     .padding(10.dp)
                     .layoutId("play")
             )
@@ -195,6 +144,65 @@ fun YouTubeExpandableScreen(
                     .padding(10.dp)
                     .layoutId("close")
             )
+        }
+    }
+}
+
+@Composable
+fun YouTubeVideoList(
+    viewModel: YouTubeViewModel,
+    textColor: Color,
+    background: Color,
+) {
+    val lazyListState = rememberForeverLazyListState(key = "VideoMovies")
+    val coroutineScope = rememberCoroutineScope()
+
+    LazyColumn(
+        modifier = Modifier.padding(top = 10.dp, bottom = 100.dp),
+        state = lazyListState) {
+
+        itemsIndexed(viewModel.videos.value) { index, video ->
+            Card(
+                border = if (video.key == viewModel.selectedVideo.value.key)
+                    BorderStroke(2.dp, textColor)
+                else null,
+                backgroundColor = background
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.selectedVideo.value = video
+                                coroutineScope.launch {
+                                    lazyListState.animateScrollToItem(index = index)
+                                }
+                            }
+                            .padding(10.dp)
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(getYouTubeThumbnail(video.key))
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .background(Color.Black)
+                                .height(50.dp)
+                        )
+
+                        Body2(
+                            text = video.name,
+                            color = textColor,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+
+                    Divider(color = textColor, modifier = Modifier.padding(top = 5.dp))
+                }
+            }
         }
     }
 }
