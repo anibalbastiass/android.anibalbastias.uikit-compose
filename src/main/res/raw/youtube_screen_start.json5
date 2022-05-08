@@ -14,7 +14,7 @@
   },
   title: {
     width: "spread",
-    start: ['v1', 'end', 8],
+    start: ['v1', 'end', 4],
     top: ['v1', 'top', 8],
     end: ['play', 'start', 8],
     custom: {
@@ -22,7 +22,7 @@
     }
   },
   description: {
-    start: ['v1', 'end', 8],
+    start: ['v1', 'end', 4],
     top: ['title', 'bottom', 0],
     end: ['play', 'start', 8],
     custom: {

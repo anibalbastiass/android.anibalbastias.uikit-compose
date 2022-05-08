@@ -12,6 +12,8 @@ class YouTubeViewModel : ViewModel() {
     val selectedVideo: MutableState<YouTubeVideoItem> = mutableStateOf(YouTubeVideoItem())
 
     val previousKey = mutableStateOf("")
+    val previousMovie = mutableStateOf("")
+
     val isExpanded = mutableStateOf(false)
     val isShowing = mutableStateOf(false)
     var isPlaying = mutableStateOf(false)
@@ -19,7 +21,6 @@ class YouTubeViewModel : ViewModel() {
     var movieYouTubePlayer: YouTubePlayer? = null
 
     fun reset() {
-        videos.value = listOf()
         selectedVideo.value = YouTubeVideoItem()
         previousKey.value = ""
         isExpanded.value = false

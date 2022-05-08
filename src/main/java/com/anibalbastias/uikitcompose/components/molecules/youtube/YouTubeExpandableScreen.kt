@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -86,7 +87,8 @@ fun YouTubeExpandableScreen(
                 modifier = Modifier
                     .layoutId("title")
                     .fillMaxWidth(.5f)
-                    .background(background),
+                    .background(background)
+                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value },
                 color = textColor,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
@@ -98,7 +100,8 @@ fun YouTubeExpandableScreen(
                 modifier = Modifier
                     .layoutId("description")
                     .fillMaxWidth(.4f)
-                    .background(background),
+                    .background(background)
+                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value },
                 color = textColor,
                 maxLines = 1,
                 textAlign = TextAlign.Start,
@@ -172,6 +175,8 @@ fun YouTubeVideoList(
                     Row(
                         modifier = Modifier
                             .clickable {
+                                viewModel.previousMovie.value = video.main
+
                                 viewModel.selectedVideo.value = video
                                 coroutineScope.launch {
                                     lazyListState.animateScrollToItem(index = index)
@@ -204,5 +209,25 @@ fun YouTubeVideoList(
                 }
             }
         }
+    }
+
+    ScrollToSelectedVideo(viewModel, lazyListState)
+}
+
+@Composable
+fun ScrollToSelectedVideo(
+    viewModel: YouTubeViewModel,
+    lazyListState: LazyListState,
+) {
+    var selectedIndex = 0
+    viewModel.videos.value.mapIndexed { index, video ->
+        if (viewModel.selectedVideo.value.key == video.key) {
+            selectedIndex = index
+        }
+    }
+
+    // Scroll to selected one
+    LaunchedEffect(selectedIndex) {
+        lazyListState.animateScrollToItem(index = selectedIndex)
     }
 }

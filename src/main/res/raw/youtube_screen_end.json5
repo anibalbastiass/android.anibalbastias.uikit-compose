@@ -8,14 +8,13 @@
   },
   v1: {
     width: "spread",
-    height: 250,
+    height: 220,
     start: ['parent', 'start', 0],
     end: ['parent', 'end', 0],
     top: ['parent', 'top', 0]
   },
   title: {
     width: "spread",
-    height: 28,
     start: ['parent', 'start', 16],
     top: ['v1', 'bottom', 16],
     end: ['parent', 'end', 16],

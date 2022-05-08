@@ -33,7 +33,7 @@ fun YoutubeVideoScreen(
     val videoModifier = if (animateToEnd) {
         Modifier.fillMaxWidth()
     } else {
-        Modifier.size(120.dp, 120.dp)
+        Modifier.size(90.dp, 90.dp)
     }
 
     AndroidView(
