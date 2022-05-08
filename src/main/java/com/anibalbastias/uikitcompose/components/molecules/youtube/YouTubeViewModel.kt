@@ -17,4 +17,14 @@ class YouTubeViewModel : ViewModel() {
     var isPlaying = mutableStateOf(false)
 
     var movieYouTubePlayer: YouTubePlayer? = null
+
+    fun reset() {
+        videos.value = listOf()
+        selectedVideo.value = YouTubeVideoItem()
+        previousKey.value = ""
+        isExpanded.value = false
+        isShowing.value = false
+        isPlaying.value = false
+        movieYouTubePlayer = null
+    }
 }
