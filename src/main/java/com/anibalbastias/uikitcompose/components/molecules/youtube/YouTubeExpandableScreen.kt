@@ -3,6 +3,7 @@ package com.anibalbastias.uikitcompose.components.molecules.youtube
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.layoutId
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.anibalbastias.uikitcompose.R
 import com.anibalbastias.uikitcompose.components.atom.Body2
@@ -184,11 +186,8 @@ fun YouTubeVideoList(
                             }
                             .padding(10.dp)
                     ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(getYouTubeThumbnail(video.key))
-                                .crossfade(true)
-                                .build(),
+                        Image(
+                            painter = rememberAsyncImagePainter(getYouTubeThumbnail(video.key)),
                             contentDescription = null,
                             modifier = Modifier
                                 .background(Color.Black)
