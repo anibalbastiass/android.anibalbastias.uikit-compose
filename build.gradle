@@ -79,7 +79,7 @@ dependencies {
     implementation deps.thirdParty.sharedElementCompose
     implementation deps.thirdParty.youTubePlayer
     implementation deps.thirdParty.youTubePlayerChromcast
-    implementation deps.thirdParty.coilCompose
+    implementation deps.thirdParty.landscapistGlide
 
     // Google
     implementation deps.google.material

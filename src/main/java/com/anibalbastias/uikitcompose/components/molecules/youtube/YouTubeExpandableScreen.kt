@@ -27,14 +27,12 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.layoutId
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.anibalbastias.uikitcompose.R
 import com.anibalbastias.uikitcompose.components.atom.Body2
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeUtils.getYouTubeThumbnail
 import com.anibalbastias.uikitcompose.utils.getMotionScene
 import com.anibalbastias.uikitcompose.utils.rememberForeverLazyListState
+import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -163,7 +161,7 @@ fun YouTubeVideoList(
     val coroutineScope = rememberCoroutineScope()
 
     LazyColumn(
-        modifier = Modifier.padding(top = 10.dp, bottom = 100.dp),
+        modifier = Modifier.padding(top = 10.dp, bottom = 140.dp),
         state = lazyListState) {
 
         itemsIndexed(viewModel.videos.value) { index, video ->
@@ -186,12 +184,11 @@ fun YouTubeVideoList(
                             }
                             .padding(10.dp)
                     ) {
-                        Image(
-                            painter = rememberAsyncImagePainter(getYouTubeThumbnail(video.key)),
-                            contentDescription = null,
+                        GlideImage(
+                            imageModel = getYouTubeThumbnail(video.key),
                             modifier = Modifier
                                 .background(Color.Black)
-                                .height(50.dp)
+                                .size(50.dp)
                         )
 
                         Body2(
@@ -226,7 +223,7 @@ fun ScrollToSelectedVideo(
     }
 
     // Scroll to selected one
-    LaunchedEffect(selectedIndex) {
+    LaunchedEffect(viewModel.selectedVideo) {
         lazyListState.animateScrollToItem(index = selectedIndex)
     }
 }
