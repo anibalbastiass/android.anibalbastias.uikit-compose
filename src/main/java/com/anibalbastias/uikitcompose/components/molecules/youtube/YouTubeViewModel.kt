@@ -1,31 +1,33 @@
 package com.anibalbastias.uikitcompose.components.molecules.youtube
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.anibalbastias.uikitcompose.components.molecules.youtube.model.YouTubeVideoItem
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
 class YouTubeViewModel : ViewModel() {
 
-    val videos: MutableState<List<YouTubeVideoItem>> = mutableStateOf(listOf())
-    val selectedVideo: MutableState<YouTubeVideoItem> = mutableStateOf(YouTubeVideoItem())
+    var videos by mutableStateOf(listOf<YouTubeVideoItem>())
+    var selectedVideo by mutableStateOf(YouTubeVideoItem())
 
-    val previousKey = mutableStateOf("")
-    val previousMovie = mutableStateOf("")
+    var previousKey by mutableStateOf("")
+    var previousMovie by mutableStateOf("")
 
-    val isExpanded = mutableStateOf(false)
-    val isShowing = mutableStateOf(false)
-    var isPlaying = mutableStateOf(false)
+    var isExpanded by mutableStateOf(false)
+    var isShowing by mutableStateOf(false)
+    var isPlaying by mutableStateOf(false)
 
     var movieYouTubePlayer: YouTubePlayer? = null
 
     fun reset() {
-        selectedVideo.value = YouTubeVideoItem()
-        previousKey.value = ""
-        isExpanded.value = false
-        isShowing.value = false
-        isPlaying.value = false
+        selectedVideo = YouTubeVideoItem()
+
+        previousKey = ""
+        isExpanded = false
+        isShowing = false
+        isPlaying = false
         movieYouTubePlayer = null
     }
 }

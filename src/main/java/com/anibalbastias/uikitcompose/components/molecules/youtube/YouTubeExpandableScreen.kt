@@ -3,7 +3,6 @@ package com.anibalbastias.uikitcompose.components.molecules.youtube
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -45,7 +44,7 @@ fun YouTubeExpandableScreen(
     closeButtonAction: () -> Unit,
 ) {
     val progress by animateFloatAsState(
-        targetValue = if (viewModel.isExpanded.value) 1f else 0f,
+        targetValue = if (viewModel.isExpanded) 1f else 0f,
         animationSpec = tween(300)
     )
 
@@ -60,35 +59,35 @@ fun YouTubeExpandableScreen(
             progress = progress,
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (viewModel.isExpanded.value) background else Color.Transparent)
+                .background(if (viewModel.isExpanded) background else Color.Transparent)
         ) {
             Box(
                 modifier = Modifier
                     .layoutId("background", "box")
                     .background(background)
                     .clickable(onClick = {
-                        viewModel.isExpanded.value = !viewModel.isExpanded.value
+                        viewModel.isExpanded = !viewModel.isExpanded
                     })
             )
             Box(
                 modifier = Modifier
                     .padding(0.dp)
-                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value }
+                    .clickable { viewModel.isExpanded = !viewModel.isExpanded }
                     .layoutId("v1", "box")
             ) {
                 YoutubeVideoScreen(
                     viewModel = viewModel,
-                    animateToEnd = viewModel.isExpanded.value
+                    animateToEnd = viewModel.isExpanded
                 )
             }
 
             Text(
-                text = viewModel.selectedVideo.value.main,
+                text = viewModel.selectedVideo.main,
                 modifier = Modifier
                     .layoutId("title")
                     .fillMaxWidth(.5f)
                     .background(background)
-                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value },
+                    .clickable { viewModel.isExpanded = !viewModel.isExpanded },
                 color = textColor,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
@@ -96,12 +95,12 @@ fun YouTubeExpandableScreen(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = viewModel.selectedVideo.value.name,
+                text = viewModel.selectedVideo.name,
                 modifier = Modifier
                     .layoutId("description")
                     .fillMaxWidth(.4f)
                     .background(background)
-                    .clickable { viewModel.isExpanded.value = !viewModel.isExpanded.value },
+                    .clickable { viewModel.isExpanded = !viewModel.isExpanded },
                 color = textColor,
                 maxLines = 1,
                 textAlign = TextAlign.Start,
@@ -117,7 +116,7 @@ fun YouTubeExpandableScreen(
             }
             Icon(
                 painter = painterResource(
-                    id = if (viewModel.isPlaying.value) {
+                    id = if (viewModel.isPlaying) {
                         R.drawable.ic_pause
                     } else {
                         R.drawable.ic_play
@@ -127,12 +126,12 @@ fun YouTubeExpandableScreen(
                 tint = textColor,
                 modifier = Modifier
                     .clickable {
-                        if (viewModel.isPlaying.value) {
+                        if (viewModel.isPlaying) {
                             viewModel.movieYouTubePlayer?.pause()
                         } else {
                             viewModel.movieYouTubePlayer?.play()
                         }
-                        viewModel.isPlaying.value = !viewModel.isPlaying.value
+                        viewModel.isPlaying = !viewModel.isPlaying
                     }
                     .padding(10.dp)
                     .layoutId("play")
@@ -164,9 +163,9 @@ fun YouTubeVideoList(
         modifier = Modifier.padding(top = 10.dp, bottom = 140.dp),
         state = lazyListState) {
 
-        itemsIndexed(viewModel.videos.value) { index, video ->
+        itemsIndexed(viewModel.videos) { index, video ->
             Card(
-                border = if (video.key == viewModel.selectedVideo.value.key)
+                border = if (video.key == viewModel.selectedVideo.key)
                     BorderStroke(2.dp, textColor)
                 else null,
                 backgroundColor = background
@@ -175,9 +174,9 @@ fun YouTubeVideoList(
                     Row(
                         modifier = Modifier
                             .clickable {
-                                viewModel.previousMovie.value = video.main
+                                viewModel.previousMovie = video.main
 
-                                viewModel.selectedVideo.value = video
+                                viewModel.selectedVideo = video
                                 coroutineScope.launch {
                                     lazyListState.animateScrollToItem(index = index)
                                 }
@@ -216,8 +215,8 @@ fun ScrollToSelectedVideo(
     lazyListState: LazyListState,
 ) {
     var selectedIndex = 0
-    viewModel.videos.value.mapIndexed { index, video ->
-        if (viewModel.selectedVideo.value.key == video.key) {
+    viewModel.videos.mapIndexed { index, video ->
+        if (viewModel.selectedVideo.key == video.key) {
             selectedIndex = index
         }
     }

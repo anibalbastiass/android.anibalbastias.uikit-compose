@@ -19,14 +19,14 @@ fun YoutubeVideoScreen(
     viewModel: YouTubeViewModel,
     animateToEnd: Boolean,
 ) {
-    if (viewModel.previousKey.value.isEmpty() ||
-        viewModel.previousKey.value != viewModel.selectedVideo.value.key
+    if (viewModel.previousKey.isEmpty() ||
+        viewModel.previousKey != viewModel.selectedVideo.key
     ) {
-        viewModel.previousKey.value = viewModel.selectedVideo.value.key
+        viewModel.previousKey = viewModel.selectedVideo.key
 
         viewModel.movieYouTubePlayer?.loadVideo(
-            viewModel.selectedVideo.value.key,
-            viewModel.selectedVideo.value.currentTime.value
+            viewModel.selectedVideo.key,
+            viewModel.selectedVideo.currentTime
         )
     }
 
@@ -44,8 +44,8 @@ fun YoutubeVideoScreen(
                     override fun onReady(youTubePlayer: YouTubePlayer) {
                         viewModel.movieYouTubePlayer = youTubePlayer
                         viewModel.movieYouTubePlayer?.loadVideo(
-                            viewModel.selectedVideo.value.key,
-                            viewModel.selectedVideo.value.currentTime.value
+                            viewModel.selectedVideo.key,
+                            viewModel.selectedVideo.currentTime
                         )
                     }
                 })
@@ -56,7 +56,7 @@ fun YoutubeVideoScreen(
                     }
 
                     override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
-                        viewModel.selectedVideo.value.currentTime.value = second
+                        viewModel.selectedVideo.currentTime = second
                     }
 
                     override fun onError(
@@ -89,8 +89,8 @@ fun YoutubeVideoScreen(
                         state: PlayerConstants.PlayerState,
                     ) {
                         when (state) {
-                            PlayerConstants.PlayerState.PLAYING -> viewModel.isPlaying.value = true
-                            PlayerConstants.PlayerState.PAUSED -> viewModel.isPlaying.value = false
+                            PlayerConstants.PlayerState.PLAYING -> viewModel.isPlaying = true
+                            PlayerConstants.PlayerState.PAUSED -> viewModel.isPlaying = false
                             else -> {
                                 Log.d("YoutubeVideoScreen", "state: ${state.name}")
                             }
