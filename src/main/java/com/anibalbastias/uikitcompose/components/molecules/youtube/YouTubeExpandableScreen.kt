@@ -12,7 +12,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +36,7 @@ import com.anibalbastias.uikitcompose.utils.getMotionScene
 import com.anibalbastias.uikitcompose.utils.rememberForeverLazyListState
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
+
 
 @ExperimentalMaterialApi
 @ExperimentalMotionApi
