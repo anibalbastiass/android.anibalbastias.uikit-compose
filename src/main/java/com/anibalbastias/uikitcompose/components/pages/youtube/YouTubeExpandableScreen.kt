@@ -33,7 +33,10 @@ import com.anibalbastias.uikitcompose.components.atom.Body2
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeUtils.getYouTubeThumbnail
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeViewModel
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YoutubeVideoScreen
-import com.anibalbastias.uikitcompose.utils.*
+import com.anibalbastias.uikitcompose.utils.getMotionScene
+import com.anibalbastias.uikitcompose.utils.isLandscapeOrientation
+import com.anibalbastias.uikitcompose.utils.rememberForeverLazyListState
+import com.anibalbastias.uikitcompose.utils.showFullScreen
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.glide.GlideImage
@@ -45,6 +48,7 @@ fun YouTubeExpandableScreen(
     background: Color,
     textColor: Color,
     closeButtonAction: () -> Unit,
+    onFullScreen: (isFullScreen: Boolean) -> Unit,
 ) {
     val systemUiController: SystemUiController = rememberSystemUiController()
 
@@ -57,16 +61,13 @@ fun YouTubeExpandableScreen(
     val startScene = getMotionScene(context = context, scene = R.raw.youtube_screen_start)
     val endScene = getMotionScene(context = context, scene = R.raw.youtube_screen_end)
 
-    val isExpandedScreen = context.getActivity()!!.isExpandedScreen()
+    val isExpandedScreen = isLandscapeOrientation()
     systemUiController.showFullScreen(isExpandedScreen)
 
     if (isExpandedScreen) {
-        YoutubeVideoScreen(
-            viewModel = viewModel,
-            animateToEnd = viewModel.isExpanded
-        )
+        ShowYouTubeVideo(viewModel, onFullScreen)
     } else {
-        Column(Modifier.padding(bottom = 50.dp)) {
+        Column(modifier = Modifier.padding(bottom = 50.dp)) {
             MotionLayout(
                 start = ConstraintSet(startScene),
                 end = ConstraintSet(endScene),
@@ -89,10 +90,7 @@ fun YouTubeExpandableScreen(
                         .clickable { viewModel.isExpanded = !viewModel.isExpanded }
                         .layoutId("v1", "box")
                 ) {
-                    YoutubeVideoScreen(
-                        viewModel = viewModel,
-                        animateToEnd = viewModel.isExpanded
-                    )
+                    ShowYouTubeVideo(viewModel, onFullScreen)
                 }
 
                 Text(
@@ -163,6 +161,18 @@ fun YouTubeExpandableScreen(
             }
         }
     }
+}
+
+@Composable
+fun ShowYouTubeVideo(
+    viewModel: YouTubeViewModel,
+    onFullScreen: (isFullScreen: Boolean) -> Unit,
+) {
+    YoutubeVideoScreen(
+        viewModel = viewModel,
+        animateToEnd = viewModel.isExpanded,
+        onFullScreen = onFullScreen
+    )
 }
 
 @Composable
