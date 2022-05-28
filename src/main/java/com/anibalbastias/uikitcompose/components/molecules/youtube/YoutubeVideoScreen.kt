@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.anibalbastias.uikitcompose.utils.getActivity
+import com.anibalbastias.uikitcompose.utils.isExpandedScreen
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -20,6 +23,8 @@ fun YoutubeVideoScreen(
     viewModel: YouTubeViewModel,
     animateToEnd: Boolean
 ) {
+    val isExpandedScreen = LocalContext.current.getActivity()!!.isExpandedScreen()
+
     if (viewModel.previousKey.isEmpty() ||
         viewModel.previousKey != viewModel.selectedVideo.key
     ) {
@@ -55,6 +60,12 @@ fun YoutubeVideoScreen(
                         viewModel.selectedVideo.key,
                         viewModel.selectedVideo.currentTime
                     )
+
+                    if (isExpandedScreen) {
+                        youTubePlayerView.enterFullScreen()
+                    } else {
+                        youTubePlayerView.exitFullScreen()
+                    }
                 }
 
                 override fun onStateChange(

@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.anibalbastias.uikitcompose.components.molecules.youtube.model.YouTubeVideoItem
+import com.anibalbastias.uikitcompose.components.pages.youtube.model.YouTubeVideoItem
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 
 class YouTubeViewModel : ViewModel() {

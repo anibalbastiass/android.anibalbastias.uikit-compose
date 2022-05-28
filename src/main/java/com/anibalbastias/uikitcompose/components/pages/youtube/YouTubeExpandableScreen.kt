@@ -1,4 +1,4 @@
-package com.anibalbastias.uikitcompose.components.molecules.youtube
+package com.anibalbastias.uikitcompose.components.pages.youtube
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -26,20 +26,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.layoutId
 import com.anibalbastias.uikitcompose.R
 import com.anibalbastias.uikitcompose.components.atom.Body2
 import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeUtils.getYouTubeThumbnail
-import com.anibalbastias.uikitcompose.utils.getMotionScene
-import com.anibalbastias.uikitcompose.utils.rememberForeverLazyListState
+import com.anibalbastias.uikitcompose.components.molecules.youtube.YouTubeViewModel
+import com.anibalbastias.uikitcompose.components.molecules.youtube.YoutubeVideoScreen
+import com.anibalbastias.uikitcompose.utils.*
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 
-
-@ExperimentalMaterialApi
-@ExperimentalMotionApi
 @Composable
 fun YouTubeExpandableScreen(
     viewModel: YouTubeViewModel,
@@ -47,6 +46,8 @@ fun YouTubeExpandableScreen(
     textColor: Color,
     closeButtonAction: () -> Unit,
 ) {
+    val systemUiController: SystemUiController = rememberSystemUiController()
+
     val progress by animateFloatAsState(
         targetValue = if (viewModel.isExpanded) 1f else 0f,
         animationSpec = tween(300)
@@ -56,100 +57,110 @@ fun YouTubeExpandableScreen(
     val startScene = getMotionScene(context = context, scene = R.raw.youtube_screen_start)
     val endScene = getMotionScene(context = context, scene = R.raw.youtube_screen_end)
 
-    Column(Modifier.padding(bottom = 50.dp)) {
-        MotionLayout(
-            start = ConstraintSet(startScene),
-            end = ConstraintSet(endScene),
-            progress = progress,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(if (viewModel.isExpanded) background else Color.Transparent)
-        ) {
-            Box(
+    val isExpandedScreen = context.getActivity()!!.isExpandedScreen()
+    systemUiController.showFullScreen(isExpandedScreen)
+
+    if (isExpandedScreen) {
+        YoutubeVideoScreen(
+            viewModel = viewModel,
+            animateToEnd = viewModel.isExpanded
+        )
+    } else {
+        Column(Modifier.padding(bottom = 50.dp)) {
+            MotionLayout(
+                start = ConstraintSet(startScene),
+                end = ConstraintSet(endScene),
+                progress = progress,
                 modifier = Modifier
-                    .layoutId("background", "box")
-                    .background(background)
-                    .clickable(onClick = {
-                        viewModel.isExpanded = !viewModel.isExpanded
-                    })
-            )
-            Box(
-                modifier = Modifier
-                    .padding(0.dp)
-                    .clickable { viewModel.isExpanded = !viewModel.isExpanded }
-                    .layoutId("v1", "box")
+                    .fillMaxSize()
+                    .background(if (viewModel.isExpanded) background else Color.Transparent)
             ) {
-                YoutubeVideoScreen(
-                    viewModel = viewModel,
-                    animateToEnd = viewModel.isExpanded
+                Box(
+                    modifier = Modifier
+                        .layoutId("background", "box")
+                        .background(background)
+                        .clickable(onClick = {
+                            viewModel.isExpanded = !viewModel.isExpanded
+                        })
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .clickable { viewModel.isExpanded = !viewModel.isExpanded }
+                        .layoutId("v1", "box")
+                ) {
+                    YoutubeVideoScreen(
+                        viewModel = viewModel,
+                        animateToEnd = viewModel.isExpanded
+                    )
+                }
+
+                Text(
+                    text = viewModel.selectedVideo.main,
+                    modifier = Modifier
+                        .layoutId("title")
+                        .fillMaxWidth(.5f)
+                        .background(background)
+                        .clickable { viewModel.isExpanded = !viewModel.isExpanded },
+                    color = textColor,
+                    style = MaterialTheme.typography.body1,
+                    textAlign = TextAlign.Start,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = viewModel.selectedVideo.name,
+                    modifier = Modifier
+                        .layoutId("description")
+                        .fillMaxWidth(.4f)
+                        .background(background)
+                        .clickable { viewModel.isExpanded = !viewModel.isExpanded },
+                    color = textColor,
+                    maxLines = 1,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Box(
+                    modifier = Modifier
+                        .layoutId("list", "box")
+                        .background(background)
+                ) {
+                    YouTubeVideoList(viewModel, textColor, background)
+                }
+                Icon(
+                    painter = painterResource(
+                        id = if (viewModel.isPlaying) {
+                            R.drawable.ic_pause
+                        } else {
+                            R.drawable.ic_play
+                        }
+                    ),
+                    contentDescription = "Play",
+                    tint = textColor,
+                    modifier = Modifier
+                        .clickable {
+                            if (viewModel.isPlaying) {
+                                viewModel.movieYouTubePlayer?.pause()
+                            } else {
+                                viewModel.movieYouTubePlayer?.play()
+                            }
+                            viewModel.isPlaying = !viewModel.isPlaying
+                        }
+                        .padding(10.dp)
+                        .layoutId("play")
+                )
+
+                Icon(
+                    Icons.Filled.Close,
+                    contentDescription = "Close",
+                    tint = textColor,
+                    modifier = Modifier
+                        .clickable { closeButtonAction.invoke() }
+                        .padding(10.dp)
+                        .layoutId("close")
                 )
             }
-
-            Text(
-                text = viewModel.selectedVideo.main,
-                modifier = Modifier
-                    .layoutId("title")
-                    .fillMaxWidth(.5f)
-                    .background(background)
-                    .clickable { viewModel.isExpanded = !viewModel.isExpanded },
-                color = textColor,
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Start,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = viewModel.selectedVideo.name,
-                modifier = Modifier
-                    .layoutId("description")
-                    .fillMaxWidth(.4f)
-                    .background(background)
-                    .clickable { viewModel.isExpanded = !viewModel.isExpanded },
-                color = textColor,
-                maxLines = 1,
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.body2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Box(
-                modifier = Modifier
-                    .layoutId("list", "box")
-                    .background(background)
-            ) {
-                YouTubeVideoList(viewModel, textColor, background)
-            }
-            Icon(
-                painter = painterResource(
-                    id = if (viewModel.isPlaying) {
-                        R.drawable.ic_pause
-                    } else {
-                        R.drawable.ic_play
-                    }
-                ),
-                contentDescription = "Play",
-                tint = textColor,
-                modifier = Modifier
-                    .clickable {
-                        if (viewModel.isPlaying) {
-                            viewModel.movieYouTubePlayer?.pause()
-                        } else {
-                            viewModel.movieYouTubePlayer?.play()
-                        }
-                        viewModel.isPlaying = !viewModel.isPlaying
-                    }
-                    .padding(10.dp)
-                    .layoutId("play")
-            )
-
-            Icon(
-                Icons.Filled.Close,
-                contentDescription = "Close",
-                tint = textColor,
-                modifier = Modifier
-                    .clickable { closeButtonAction.invoke() }
-                    .padding(10.dp)
-                    .layoutId("close")
-            )
         }
     }
 }

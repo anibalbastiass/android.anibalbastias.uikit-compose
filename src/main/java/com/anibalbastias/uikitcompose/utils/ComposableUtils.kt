@@ -1,5 +1,6 @@
 package com.anibalbastias.uikitcompose.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Resources
@@ -66,6 +67,12 @@ val density: Float
 fun Context.findActivity(): AppCompatActivity? = when (this) {
     is AppCompatActivity -> this
     is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
+fun Context.getActivity(): Activity? = when (this) {
+    is AppCompatActivity -> this
+    is ContextWrapper -> baseContext.getActivity()
     else -> null
 }
 

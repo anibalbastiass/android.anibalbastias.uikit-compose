@@ -1,4 +1,4 @@
-package com.anibalbastias.uikitcompose.components.molecules.youtube.model
+package com.anibalbastias.uikitcompose.components.pages.youtube.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

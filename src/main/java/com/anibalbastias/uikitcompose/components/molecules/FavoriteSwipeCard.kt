@@ -18,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.unit.dp
 import com.anibalbastias.uikitcompose.theme.DarkGrey
@@ -29,7 +28,6 @@ import com.anibalbastias.uikitcompose.theme.RedAlpha
  * https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#swipetodismiss
  */
 
-@ExperimentalMaterialApi
 @Composable
 fun FavoriteSwipeCard(
     currentState: Boolean,
